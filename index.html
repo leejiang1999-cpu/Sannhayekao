@@ -2,141 +2,316 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Sàn Quẩy & Chat Online Ea Kao - Niê Ngọc Hiếu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sàn Nhảy Ea Kao - Niê Ngọc Hiếu</title>
+<script src="https://jsdelivr.net"></script>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:#05010a;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;user-select:none}
-#author{width:100%;max-width:420px;background:linear-gradient(90deg,#ff6f00,#ffea00,#ff6f00);color:#1a0b2e;text-align:center;font-size:12px;font-weight:bold;padding:5px}
-#top,#chat{width:100%;max-width:420px;display:flex;gap:4px;padding:6px;background:#140624}
-#top{border-bottom:2px solid #ff007f}
-#chat{border-top:1px solid #4a148c}
-input{flex:1;min-width:70px;padding:8px;border-radius:8px;border:1px solid #00e5ff;background:#240b40;color:#fff;font-size:14px;user-select:text;-webkit-user-select:text}
-.go{padding:8px 9px;background:#ff9800;color:#000;font-weight:bold;border:none;border-radius:8px;font-size:12px}
-canvas{width:100%;max-width:420px;height:350px;display:block;touch-action:manipulation}
-#bar{width:100%;max-width:420px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:6px}
-.act{padding:9px 3px;font-size:11px;font-weight:bold;border:none;border-radius:8px;color:#fff;background:linear-gradient(#9c27b0,#4a148c);box-shadow:0 2px 0 #00e5ff}
-.act:active{transform:translateY(2px)}
-#flirt{display:none;position:fixed;bottom:118px;width:92%;max-width:390px;background:#2a0845;border:2px solid #ff4081;border-radius:12px;padding:10px;text-align:center;z-index:9}
-.fbtn{display:block;width:100%;margin:5px 0;padding:9px;background:#ff4081;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:12px}
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+  body { background: #07070f; color: #fff; overflow: hidden; height: 100dvh; display: flex; flex-direction: column; user-select: none; }
+
+  #login-screen {
+    position: fixed; inset: 0; background: radial-gradient(circle, #240b36, #07070f 85%); z-index: 200;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 20px; text-align: center;
+  }
+  .title-glow { font-size: 26px; font-weight: 900; color: #ff007f; text-shadow: 0 0 15px #ff007f; }
+  .author-tag { font-size: 13px; color: #00f2fe; background: rgba(0,242,254,0.15); padding: 4px 14px; border-radius: 20px; border: 1px solid #00f2fe; }
+  input, select { padding: 12px; border-radius: 12px; border: 1px solid #444; background: #161626; color: #fff; font-size: 16px; width: 100%; max-width: 290px; text-align: center; outline: none; }
+  .btn-primary { padding: 14px; border-radius: 12px; border: none; background: linear-gradient(45deg, #ff007f, #7928ca); color: #fff; font-weight: bold; font-size: 16px; width: 100%; max-width: 290px; cursor: pointer; }
+
+  #top-bar { padding: 6px 10px; background: rgba(10,10,20,0.95); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a2a40; font-size: 11px; gap: 4px; }
+  .badge { background: #00e676; color: #000; padding: 3px 8px; border-radius: 12px; font-weight: bold; white-space: nowrap; }
+  .btn-mini { background: #222238; color: #fff; border: 1px solid #444; padding: 4px 8px; border-radius: 8px; font-size: 11px; cursor: pointer; }
+
+  #stage-area { height: 105px; background: linear-gradient(to bottom, #1a062e, #0c0c1a); position: relative; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 6px; border-bottom: 2px solid #ff007f; }
+  .speaker { width: 42px; height: 72px; background: #181824; border: 2px solid #333; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; animation: bassPulse 0.4s infinite alternate; }
+  .woofer { width: 25px; height: 25px; border-radius: 50%; background: #111; border: 2px solid #ff007f; }
+  .tweeter { width: 14px; height: 14px; border-radius: 50%; background: #222; border: 1px solid #00f2fe; }
+  @keyframes bassPulse { 0% { transform: scale(1); } 100% { transform: scale(1.09); box-shadow: 0 0 12px #ff007f; } }
+
+  .dj-booth { background: #1c0938; border: 2px solid #00f2fe; border-radius: 10px 10px 0 0; padding: 5px 12px; text-align: center; position: relative; }
+  .dj-chars { font-size: 26px; display: flex; gap: 8px; justify-content: center; animation: bounceDJ 0.38s infinite alternate; }
+  .dj-label { font-size: 9px; font-weight: bold; color: #00f2fe; margin-top: 2px; }
+  .mc-shout { position: absolute; top: -26px; left: 50%; transform: translateX(-50%); background: #ffea00; color: #000; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 12px; white-space: nowrap; display: none; z-index: 30; }
+  @keyframes bounceDJ { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+
+  #dance-floor { flex: 1; position: relative; overflow: hidden; touch-action: manipulation; background: radial-gradient(circle at 50% 0%, rgba(121,40,202,0.35), #07070f 75%); }
+  #dance-floor::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,0,127,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(0,242,254,0.12) 1px, transparent 1px); background-size: 32px 32px; pointer-events: none; }
+  .laser { position: absolute; top: -10px; left: 25%; width: 3px; height: 110dvh; background: linear-gradient(to bottom, rgba(0,242,254,0.85), transparent); transform-origin: top center; animation: sweep1 2.8s infinite alternate ease-in-out; pointer-events: none; }
+  .laser.l2 { left: 75%; background: linear-gradient(to bottom, rgba(255,0,127,0.85), transparent); animation: sweep2 2.2s infinite alternate ease-in-out; }
+  @keyframes sweep1 { 0% { transform: rotate(-40deg); } 100% { transform: rotate(50deg); } }
+  @keyframes sweep2 { 0% { transform: rotate(40deg); } 100% { transform: rotate(-50deg); } }
+  .strobe-flash { animation: strobeBg 0.14s infinite; }
+  @keyframes strobeBg { 0% { background-color: rgba(255,0,127,0.28); } 50% { background-color: rgba(0,242,254,0.28); } 100% { background-color: transparent; } }
+
+  .player { position: absolute; transform: translate(-50%, -50%); text-align: center; transition: left 0.25s ease-out, top 0.25s ease-out; pointer-events: none; z-index: 5; }
+  .player-name { background: rgba(0,0,0,0.75); padding: 2px 6px; border-radius: 8px; font-size: 10px; margin-bottom: 2px; white-space: nowrap; border: 1px solid #ff007f; font-weight: bold; }
+  .chat-bubble { background: #fff; color: #000; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; margin-bottom: 3px; max-width: 140px; word-wrap: break-word; }
+  .avatar-wrap { font-size: 40px; display: inline-block; }
+
+  .dance-chill { animation: animChill 0.6s infinite alternate ease-in-out; }
+  @keyframes animChill { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
+  .dance-quat { animation: animQuat 0.24s infinite alternate ease-in-out; }
+  @keyframes animQuat { 0% { transform: rotate(-18deg) scale(1.08) translateX(-4px); } 100% { transform: rotate(18deg) scale(1.08) translateX(4px); } }
+  .dance-lac { animation: animLac 0.22s infinite alternate ease-in-out; }
+  @keyframes animLac { 0% { transform: skewX(-16deg); } 100% { transform: skewX(16deg) translateY(-8px); } }
+  .dance-nhay { animation: animNhay 0.34s infinite alternate cubic-bezier(0.2,0.8,0.4,1); }
+  @keyframes animNhay { 0% { transform: translateY(0) scaleY(0.9); } 100% { transform: translateY(-16px) scaleY(1.1); } }
+
+  .fly-icon { position: absolute; bottom: 10px; font-size: 26px; pointer-events: none; animation: flyUp 2.2s ease-out forwards; z-index: 15; }
+  @keyframes flyUp { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 100% { transform: translateY(-320px) scale(1.5); opacity: 0; } }
+
+  #controls-panel { background: #10101e; padding: 5px 6px; border-top: 1px solid #2a2a40; display: flex; flex-direction: column; gap: 5px; z-index: 20; }
+  .scroll-row { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; }
+  .scroll-row::-webkit-scrollbar { display: none; }
+  .action-btn { background: #1d1d33; color: #fff; border: 1px solid #3a3a5c; padding: 5px 10px; border-radius: 14px; font-size: 11px; font-weight: 600; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
+  .action-btn.active { background: #ff007f; border-color: #ff007f; }
+  .trend-btn { background: #2b1055; border-color: #00f2fe; color: #e0f7fa; }
+
+  #chat-bar { padding: 5px 6px 8px 6px; background: #0b0b14; display: flex; gap: 5px; z-index: 20; }
+  #chat-input { flex: 1; text-align: left; padding: 8px 12px; font-size: 14px; border-radius: 20px; max-width: none; }
+  .send-btn { background: #00e676; color: #000; border: none; padding: 0 14px; border-radius: 20px; font-weight: bold; cursor: pointer; }
 </style>
 </head>
 <body>
-<div id="author">👑 NIÊ NGỌC HIẾU • ĐANG KẾT NỐI...</div>
-<div id="top">
-  <input id="nm" type="text" placeholder="Gõ tên bạn..." maxlength="12" onchange="upName()">
-  <button class="go" id="gbtn" onclick="togGen()">🧑 NAM</button>
-  <button class="go" onclick="join()">LÊN SÀN</button>
-  <button class="go" style="background:#00e5ff" onclick="nextBeat()">🎛️ BEAT</button>
+<div id="login-screen">
+  <div class="title-glow">🔥 SÀN NHẢY EA KAO 🔥</div>
+  <div class="author-tag">Tác giả: Niê Ngọc Hiếu</div>
+  <input type="text" id="username" placeholder="Nhập biệt danh của bạn..." maxlength="16">
+  <select id="gender">
+    <option value="nam">🕺 Nhân vật Nam (Soái Ca Quẩy)</option>
+    <option value="nu">💃 Nhân vật Nữ (Nữ Hoàng Sàn Đêm)</option>
+  </select>
+  <button class="btn-primary" onclick="joinParty()">LÊN SÀN QUẨY NGAY</button>
 </div>
-<canvas id="c" width="420" height="350"></canvas>
-<div id="chat">
-  <input id="msg" type="text" placeholder="💬 Gõ lời chat hiện trên đầu..." maxlength="35" onkeydown="if(event.key==='Enter')sendChat()">
-  <button class="go" style="background:#69f0ae" onclick="sendChat()">GỬI CHAT</button>
-</div>
-<div id="flirt">
-  <div id="ftitle" style="font-weight:bold;color:#ffea00;margin-bottom:6px;font-size:12px">💌 Thả thính:</div>
-  <div id="fpreview" style="background:#140624;padding:8px;border-radius:8px;color:#00e5ff;font-size:12px;margin-bottom:6px;border:1px dashed #ff4081"></div>
-  <button class="fbtn" style="background:#ff9800;color:#000" onclick="randThinh()">🎲 ĐỔI CÂU THẢ THÍNH KHÁC (30 CÂU)</button>
-  <button class="fbtn" onclick="sendFlirt()">💘 GỬI CÂU THẢ THÍNH NÀY</button>
-  <button class="fbtn" style="background:#555" onclick="document.getElementById('flirt').style.display='none'">❌ Đóng bảng</button>
-</div>
-<div id="bar">
-  <button class="act" onclick="setDance(1,'🤯 LẮC ĐẦU!')">🤯 LẮC ĐẦU</button>
-  <button class="act" onclick="setDance(2,'🍑 QUẨY MÔNG!')">🍑 QUẨY MÔNG</button>
-  <button class="act" onclick="setDance(3,'🪭 MÚA QUẠT!')">🪭 MÚA QUẠT</button>
-  <button class="act" onclick="setDance(4,'🕺 NHẢY DÂY!')">🕺 NHẢY DÂY</button>
-  <button class="act" onclick="setDance(5,'🤖 ROBOT!')">🤖 ROBOT</button>
-  <button class="act" onclick="setDance(6,'💘 THẢ TIM!')">💘 THẢ TIM</button>
-</div>
-<script>
-const API="https://google.com";
-const UID="u"+Date.now()+Math.floor(Math.random()*999);
-const cv=document.getElementById("c"),ctx=cv.getContext("2d");
-let ac,step=0,iv,me="Khách "+Math.floor(Math.random()*99),gen=0,mx=Math.floor(Math.random()*200+110),my=Math.floor(Math.random()*70+220),dance=1,say="LÊN SÀN!",stT=90,trk=0,online="",cnt=1,tgt="",rep="",repT=0,curThinh="",netSt="⏳";
-const beats="330,330,0,330,392,0,440,392,330,0,293,330,392,0,440,523|440,0,440,523,587,0,523,440,392,0,392,440,523,0,587,659|261,329,392,523,392,329,261,0,293,349,440,587,440,349,293,0";
-const cls="#ff1744|#00e5ff|#76ff03|#ffea00|#d500f9|#ff6d00|#1de9b6|#f50057";
-const myCl=cls.split("|").at(Math.floor(Math.random()*8));
-const bots="Bé Mơ,95,220,#ff4081,3,1|Tèo Cà,325,225,#00e5ff,1,0|Út Lan,140,305,#69f0ae,2,1";
-const thinh30="Mời bạn ly kem tươi quán anh Hiếu nhé!|Cà phê đắng nhưng gặp bạn lại ngọt!|Lát tan sàn ra bờ hồ Ea Kao hóng gió nha!|Nhìn bạn quẩy mà tim mình rớt nhịp!|Nhà mình bán cà phê, bạn có muốn làm chủ không?|Order một ly kem tươi, khuyến mãi thêm trái tim mình!|Bầu trời Ea Kao xanh ngắt, không bằng ánh mắt của bạn!|Trời Đắk Lắk se lạnh, nắm tay mình cho ấm nha!|Tạp hóa anh Hiếu cái gì cũng bán, trừ tình cảm của mình!|Bạn ơi làm rơi người yêu kìa, nhặt mình lên đi!|Nhạc DJ căng đét nhưng không căng bằng độ xinh của bạn!|Gọi bạn là cà phê sữa, vì thiếu bạn là mình mất ngủ!|Cột đèn ngã tư Ea Kao còn đứng im, còn mình thì đổ bạn rồi!|Nay không cần uống cà phê, nhìn bạn là đủ say cả ngày!|Cho mình xin info để tối về mơ thấy nhau nha!|Bạn có bản đồ không? Mình bị lạc trong tim bạn rồi!|Trà sữa thì trân châu, còn mình thì trân trọng bạn!|Hôm nay trời đẹp thế này, hay mình yêu nhau đi!|Đừng quẩy nữa, về làm dâu/rể Ea Kao với mình đi!|Nụ cười của bạn tỏa nắng hơn cả đèn laser quán anh Hiếu!|Mình không thích uống trà, mình chỉ thích trà trộn vào tim bạn!|Cà phê thì có vị đắng, còn bạn thì có vị của tương lai!|Tối nay hồ Ea Kao gió mát, có mình chờ bạn ở đó!|Mình hơi cận nhưng nhìn rõ bạn là định mệnh của đời mình!|Anh Hiếu bán kem ốc quế, còn mình bán đứng trái tim cho bạn!|Yêu bạn như giá cà phê đầu mùa, chỉ có tăng chứ không giảm!|Đứng gần bạn tự nhiên thấy tim đập nhanh hơn tiếng bass!|Nếu yêu bạn là sai thì mình chấp nhận sai cả đời!|Gặp bạn ở sàn Ea Kao đúng là định mệnh sắp đặt!|Quẩy hết đêm nay rồi mình đi ăn sáng cùng nhau nhé!";
 
-function showBar(){document.getElementById("author").innerText="👑 NIÊ NGỌC HIẾU • "+netSt+" ONLINE: "+cnt+" NGƯỜI";}
-function randThinh(){let a=thinh30.split("|");curThinh=a.at(Math.floor(Math.random()*a.length));document.getElementById("fpreview").innerText="💬 "+curThinh;}
-function upName(){let v=document.getElementById("nm").value.trim();if(v)me=v;}
-window.onSan=function(data){
-  netSt="✅";let nw="",c=0,vals=Object.values(data);
-  for(let i=0;i<vals.length;i++){let u=vals.at(i);if(!u||!u.id)continue;c++;if(u.id===UID)continue;let cs=(u.s||"").split("|").join(" ").split(",").join(" ");nw+=(nw?"|":"")+u.n+","+u.x+","+u.y+","+u.c+","+u.d+","+u.g+","+cs;}
-  online=nw;cnt=Math.max(1,c);showBar();
-};
-function sync(){
-  upName();showBar();
-  let q="?cb=onSan&id="+encodeURIComponent(UID)+"&n="+encodeURIComponent(me)+"&x="+Math.round(mx)+"&y="+Math.round(my)+"&d="+dance+"&g="+gen+"&c="+encodeURIComponent(myCl)+"&s="+encodeURIComponent(stT>0?say:"");
-  let old=document.getElementById("jp");if(old)old.remove();
-  let sc=document.createElement("script");sc.id="jp";sc.src=API+q;
-  sc.onerror=()=>{netSt="❌Lỗi";showBar();};
-  document.body.appendChild(sc);
-}
-sync();setInterval(sync,1800);
-function tone(tp,f1,f2,vol,dur){let t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=tp;o.frequency.setValueAtTime(f1,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.005,t+dur);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);}
-function playStep(){if(!ac)return;let s=step%16,mel=beats.split("|").at(trk).split(",");if(s%4===0)tone("sine",150,35,0.65,0.16);if(s%4===2)tone("sawtooth",65,110,0.28,0.14);if(s%2===1)tone("square",3200,1200,0.05,0.04);let nf=Number(mel.at(s));if(nf>0)tone("sawtooth",nf,nf*1.01,0.14,0.13);step++;}
-function startMusic(){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume();if(!iv)iv=setInterval(playStep,135);}
-function togGen(){gen=gen===0?1:0;document.getElementById("gbtn").innerText=gen===0?"🧑 NAM":"👩 NỮ";sync();}
-function nextBeat(){startMusic();trk=(trk+1)%3;say="🎧 BEAT "+(trk+1);stT=70;sync();}
-function join(){upName();startMusic();setDance(dance,"LÊN SÀN ONLINE!");}
-function setDance(d,txt){upName();startMusic();dance=d;say=txt;stT=90;sync();}
-function sendFlirt(){document.getElementById("flirt").style.display="none";say="💘 "+curThinh;stT=260;dance=6;if(tgt==="Bé Mơ"){rep="Ko nhaz! 🙅‍♀️";repT=260;}else if(tgt==="Tèo Cà"||tgt==="Út Lan"){rep="Okela chốt đơn kem tươi luôn! 😍";repT=260;}sync();}
-function sendChat(){let el=document.getElementById("msg"),v=el.value.trim();if(!v)return;upName();startMusic();say="💬 "+v;stT=320;el.value="";sync();}
-cv.addEventListener("pointerdown",e=>{
-  startMusic();let r=cv.getBoundingClientRect();
-  let tx=(e.clientX-r.left)*(420/r.width),ty=Math.max(185,Math.min(325,(e.clientY-r.top)*(350/r.height)));
-  let hit="",all=bots+(online?"|"+online:"");
-  all.split("|").forEach(s=>{if(!s)return;let p=s.split(","),px=Number(p.at(1)),py=Number(p.at(2));if(Math.hypot(tx-px,ty-py)<26)hit=p.at(0)+","+px+","+py;});
-  if(hit){let h=hit.split(",");tgt=h.at(0);mx=Number(h.at(1))-24;my=Number(h.at(2))+2;randThinh();document.getElementById("ftitle").innerText="💌 Thả thính "+tgt+":";document.getElementById("flirt").style.display="block";}
-  else{document.getElementById("flirt").style.display="none";mx=tx;my=ty;tgt="";}
-  sync();
-});
-function loop(){
-  ctx.clearRect(0,0,420,350);if(stT>0)stT--;if(repT>0)repT--;
-  let c1=cls.split("|").at(step%8),c2=cls.split("|").at((step+3)%8),pulse=(step%4===0)?4:0;
-  let bg=ctx.createRadialGradient(210,120,20,210,180,260);bg.addColorStop(0,c1+"44");bg.addColorStop(0.6,"#16042b");bg.addColorStop(1,"#05010a");
-  ctx.fillStyle=bg;ctx.fillRect(0,0,420,350);
-  ctx.fillStyle="#18062c";ctx.beginPath();ctx.moveTo(30,155);ctx.lineTo(390,155);ctx.lineTo(420,335);ctx.lineTo(0,335);ctx.closePath();ctx.fill();
-  for(let r=0;r<4;r++){for(let c=0;c<6;c++){ctx.fillStyle=cls.split("|").at((r+c+Math.floor(step/2))%8)+"38";let y1=160+r*42,w1=60+r*4,x1=35+c*w1-r*10;ctx.fillRect(x1,y1,w1-4,38);}}
-  ctx.save();ctx.globalCompositeOperation="lighter";
-  for(let i=0;i<5;i++){let lx=210+Math.sin(Math.sin(step*0.18+i)*1.1+i)*220;ctx.strokeStyle=cls.split("|").at((i+step)%8);ctx.lineWidth=16;ctx.globalAlpha=0.22;ctx.beginPath();ctx.moveTo(20+i*95,0);ctx.lineTo(lx,335);ctx.stroke();ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.globalAlpha=0.65;ctx.beginPath();ctx.moveTo(20+i*95,0);ctx.lineTo(lx,335);ctx.stroke();}
-  ctx.restore();ctx.fillStyle="#cfd8dc";ctx.beginPath();ctx.arc(210,56,12,0,Math.PI*2);ctx.fill();ctx.fillStyle=c2;ctx.beginPath();ctx.arc(207+Math.sin(step)*5,54,4,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#1a052e";ctx.fillRect(55,8,310,34);ctx.strokeStyle=c1;ctx.lineWidth=3;ctx.strokeRect(55,8,310,34);
-  ctx.fillStyle="#ffea00";ctx.font="bold 12px sans-serif";ctx.textAlign="center";ctx.fillText("🏪 TẠP HÓA & KEM TƯƠI EA KAO",210,23);
-  ctx.fillStyle="#00e5ff";ctx.font="bold 10px sans-serif";ctx.fillText("🔥 ONLINE: "+cnt+" DÂN CHƠI • BEAT "+(trk+1),210,37);
-  ctx.fillStyle="#12121c";ctx.fillRect(42-pulse/2,62-pulse/2,46+pulse,88+pulse);ctx.fillRect(332-pulse/2,62-pulse/2,46+pulse,88+pulse);
-  ctx.strokeStyle=c1;ctx.lineWidth=2;ctx.strokeRect(42-pulse/2,62-pulse/2,46+pulse,88+pulse);ctx.strokeRect(332-pulse/2,62-pulse/2,46+pulse,88+pulse);
-  ctx.fillStyle=c1;ctx.beginPath();ctx.arc(65,85,13+pulse,0,Math.PI*2);ctx.arc(65,125,15+pulse,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(355,85,13+pulse,0,Math.PI*2);ctx.arc(355,125,15+pulse,0,Math.PI*2);ctx.fill();
-  let b1=Math.sin(step*0.9)*4,b2=Math.cos(step*0.9)*4;
-  ctx.fillStyle="#ff9800";ctx.fillRect(162,92+b1,22,25);ctx.fillStyle="#ffcc80";ctx.beginPath();ctx.arc(173,82+b1,9,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#00e5ff";ctx.lineWidth=3;ctx.beginPath();ctx.arc(173,82+b1,10,Math.PI,0);ctx.stroke();ctx.fillStyle="#fff";ctx.font="bold 9px sans-serif";ctx.fillText("DJ Hiếu",173,67+b1);
-  ctx.fillStyle="#e040fb";ctx.fillRect(236,92+b2,22,25);ctx.fillStyle="#ffcc80";ctx.beginPath();ctx.arc(247,82+b2,9,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#ffea00";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(257,96+b2);ctx.lineTo(266,80+b2);ctx.stroke();ctx.fillStyle="#fff";ctx.fillText("MC Híp",247,67+b2);
-  ctx.fillStyle="#180828";ctx.fillRect(120,112,180,38);ctx.strokeStyle=c1;ctx.lineWidth=2.5;ctx.strokeRect(120,112,180,38);ctx.fillStyle="#ffea00";ctx.font="bold 10px sans-serif";ctx.fillText("🎧 DJ NIÊ NGỌC HIẾU & MC HÍP 🎤",210,135);
-  let all=bots+(online?"|"+online:"")+"|"+me+" ⭐,"+mx+","+my+","+myCl+","+dance+","+gen+","+(stT>0?say:"");
-  all.split("|").forEach((s,idx,arr)=>{
-    if(!s)return;let p=s.split(","),x=Number(p.at(1)),y=Number(p.at(2)),cl=p.at(3),nm=p.at(0),dn=Number(p.at(4)),gd=Number(p.at(5)),msg=p.at(6)||"",isMe=idx===arr.length-1;
-    if(!isMe&&nm===tgt&&repT>0)msg=rep;
-    let sc=0.72+(y-175)/395,t=step*0.85+x*0.08;if(dn===5)t=Math.floor(step/2)*1.5;
-    let by=dn===4?-Math.abs(Math.sin(t))*18:Math.sin(t)*4,hx=dn===1?Math.sin(t*1.6)*7:0,hip=dn===2?Math.sin(t*1.4)*8:0;
-    ctx.save();ctx.translate(x,y+by);ctx.scale(sc,sc);ctx.fillStyle="rgba(0,0,0,0.45)";ctx.beginPath();ctx.ellipse(0,22-by,16,5,0,0,Math.PI*2);ctx.fill();
-    if(gd===1){ctx.fillStyle="#212121";ctx.fillRect(hx-10,-18,20,22);ctx.fillStyle=cl;ctx.beginPath();ctx.moveTo(-8,-6);ctx.lineTo(8,-6);ctx.lineTo(14+hip,16);ctx.lineTo(-14+hip,16);ctx.closePath();ctx.fill();}
-    else{ctx.fillStyle=cl;ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(9,-6);ctx.lineTo(10+hip,16);ctx.lineTo(-10+hip,16);ctx.closePath();ctx.fill();}
-    ctx.fillStyle="#ffcc80";ctx.beginPath();ctx.arc(hx,-16,8,0,Math.PI*2);ctx.fill();ctx.fillStyle="#212121";ctx.beginPath();ctx.arc(hx,-18,8,Math.PI,0);ctx.fill();
-    ctx.strokeStyle="#ffcc80";ctx.lineWidth=3;ctx.beginPath();
-    if(dn===3){let f=Math.sin(t*2)*12;ctx.moveTo(-9,-2);ctx.lineTo(-22,-10+f);ctx.moveTo(9,-2);ctx.lineTo(22,-10-f);}
-    else if(dn===6){ctx.moveTo(-9,-2);ctx.lineTo(-14,-22);ctx.moveTo(9,-2);ctx.lineTo(14,-22);}
-    else if(dn===5){let r=(Math.floor(step/2)%2===0)?-15:4;ctx.moveTo(-9,-2);ctx.lineTo(-18,-2);ctx.lineTo(-18,r);ctx.moveTo(9,-2);ctx.lineTo(18,-2);ctx.lineTo(18,-r);}
-    else{ctx.moveTo(-9,-2);ctx.lineTo(-16,-8+by);ctx.moveTo(9,-2);ctx.lineTo(16,-8-by);}
-    ctx.stroke();ctx.fillStyle=isMe?"#ffea00":"#fff";ctx.font=isMe?"bold 13px sans-serif":"bold 11px sans-serif";ctx.textAlign="center";ctx.fillText(nm,hx,-30);
-    if(msg){ctx.font="bold 10px sans-serif";let bw=Math.max(80,ctx.measureText(msg).width+16);ctx.fillStyle=isMe?"#ffea00":(nm==="Bé Mơ"?"#ff1744":"#00e5ff");ctx.fillRect(-bw/2,-58,bw,20);ctx.fillStyle=isMe?"#000":"#fff";ctx.fillText(msg,0,-44);}
-    ctx.restore();
-  });
-  ctx.fillStyle="rgba(255,255,255,0.85)";ctx.font="bold 11px sans-serif";ctx.textAlign="center";ctx.fillText("© Tác giả: Niê Ngọc Hiếu • Ngã Tư Hồ Ea Kao",210,345);requestAnimationFrame(loop);
-}
-loop();
+<div id="top-bar">
+  <div><b>Sàn Ea Kao</b> • <span style="color:#00f2fe;">Niê Ngọc Hiếu</span></div>
+  <div style="display: flex; gap: 4px; align-items: center;">
+    <button class="btn-mini" onclick="changeTrack()">🎵 Đổi Nhạc</button>
+    <button class="btn-mini" onclick="toggleMusic()" id="music-btn">🔊</button>
+    <span class="badge" id="online-count">1 online</span>
+  </div>
+</div>
+
+<div id="stage-area">
+  <div class="speaker"><div class="tweeter"></div><div class="woofer"></div></div>
+  <div class="dj-booth">
+    <div class="mc-shout" id="mc-shout">LÊN NÓC NHÀ!</div>
+    <div class="dj-chars"><span>🎧</span><span>🎤</span></div>
+    <div class="dj-label">DJ & MC HÍP LIVE</div>
+  </div>
+  <div class="speaker"><div class="tweeter"></div><div class="woofer"></div></div>
+</div>
+
+<div id="dance-floor" onclick="movePlayer(event)">
+  <div class="laser"></div>
+  <div class="laser l2"></div>
+  <div id="players-container"></div>
+</div>
+
+<div id="controls-panel">
+  <div class="scroll-row" id="dance-row">
+    <button class="action-btn active" onclick="setDance('dance-nhay', this)">🔥 Nhảy Sung</button>
+    <button class="action-btn" onclick="setDance('dance-quat', this)">🌀 Múa Quạt</button>
+    <button class="action-btn" onclick="setDance('dance-lac', this)">🍑 Lắc Mông</button>
+    <button class="action-btn" onclick="setDance('dance-chill', this)">😎 Đứng Chill</button>
+    <button class="action-btn" onclick="triggerFX('strobe')">⚡ Chớp Đèn</button>
+    <button class="action-btn" onclick="triggerFX('heart')">❤️ Thả Tim</button>
+    <button class="action-btn" onclick="triggerFX('firework')">🎆 Pháo Hoa</button>
+  </div>
+  <div class="scroll-row">
+    <button class="action-btn trend-btn" onclick="playTrend('Lên nóc nhà là bắt con gà!', 'horn')">📢 Lên nóc nhà!</button>
+    <button class="action-btn trend-btn" onclick="playTrend('Hết nước chấm luôn anh em ơi!', 'bass')">🔥 Hết nước chấm</button>
+    <button class="action-btn trend-btn" onclick="playTrend('Quẩy lên Ea Kao ơi! Bay nóc!', 'horn')">🎉 Quẩy lên Ea Kao!</button>
+    <button class="action-btn trend-btn" onclick="playTrend('Keo lỳ tái châu, mãi đỉnh!', 'bass')">✨ Keo lỳ tái châu</button>
+    <button class="action-btn trend-btn" onclick="playTrend('Đưa tay đây nào, mãi bên nhau bạn nhé!', 'horn')">🤝 Mãi bên nhau</button>
+  </div>
+</div>
+
+<div id="chat-bar">
+  <input type="text" id="chat-input" placeholder="Nhắn tin cùng mọi người..." maxlength="45" onkeypress="if(event.key==='Enter') sendChat()">
+  <button class="send-btn" onclick="sendChat()">Gửi</button>
+</div>
+
+<audio id="bg-music" loop playsinline></audio>
+<script>
+  const SUPABASE_URL = 'https://supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_mvY419VuNxbjo7UF1jXExQ_2RSPbSNd';
+
+  const tracks = [
+    'https://soundhelix.com',
+    'https://soundhelix.com',
+    'https://soundhelix.com'
+  ];
+  let trackIdx = 0;
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const myId = 'ekao_' + Math.random().toString(36).substr(2, 9);
+  let myState = { id: myId, name: 'Dân Chơi Ea Kao', gender: 'nam', dance: 'dance-nhay', x: 50, y: 50, msg: '' };
+  let channel, audioCtx;
+
+  function playDJEffect(type) {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      if (type === 'horn') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(420, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(380, audioCtx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.45);
+      } else {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(35, audioCtx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+      }
+    } catch (e) {}
+  }
+
+  function speakTrend(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'vi-VN'; utter.rate = 1.15;
+      window.speechSynthesis.speak(utter);
+    }
+  }
+
+  function joinParty() {
+    myState.name = document.getElementById('username').value.trim() || 'Dân Chơi Ea Kao';
+    myState.gender = document.getElementById('gender').value;
+    myState.x = Math.floor(Math.random() * 60) + 20;
+    myState.y = Math.floor(Math.random() * 55) + 20;
+    document.getElementById('login-screen').style.display = 'none';
+
+    const audio = document.getElementById('bg-music');
+    audio.src = tracks[trackIdx]; audio.volume = 0.6;
+    audio.play().catch(() => {});
+    document.getElementById('music-btn').innerText = '⏸';
+
+    playDJEffect('horn');
+    showMCShout('CHÀO MỪNG ' + myState.name.toUpperCase() + ' ĐẾN SÀN EA KAO!');
+
+    channel = supabaseClient.channel('san-nhay-eakao-live', { config: { presence: { key: myId } } });
+    channel
+      .on('presence', { event: 'sync' }, () => renderPlayers(channel.presenceState()))
+      .on('broadcast', { event: 'party-event' }, (p) => {
+        const d = p.payload;
+        if (d.type === 'trend') { showMCShout(d.text); playDJEffect(d.sound); speakTrend(d.text); }
+        else if (d.type === 'fx') runFX(d.fxName);
+      })
+      .subscribe(async (status) => { if (status === 'SUBSCRIBED') await channel.track(myState); });
+  }
+
+  function movePlayer(e) {
+    if (!channel) return;
+    const rect = document.getElementById('dance-floor').getBoundingClientRect();
+    myState.x = (((e.clientX - rect.left) / rect.width) * 100).toFixed(1);
+    myState.y = (((e.clientY - rect.top) / rect.height) * 100).toFixed(1);
+    channel.track(myState);
+  }
+
+  function setDance(danceClass, btn) {
+    document.querySelectorAll('#dance-row .action-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    myState.dance = danceClass;
+    if (channel) channel.track(myState);
+  }
+
+  function playTrend(text, sound) {
+    showMCShout(text); playDJEffect(sound); speakTrend(text);
+    myState.msg = '🎤 ' + text;
+    if (channel) {
+      channel.track(myState);
+      channel.send({ type: 'broadcast', event: 'party-event', payload: { type: 'trend', text, sound } });
+    }
+    setTimeout(() => { myState.msg = ''; if (channel) channel.track(myState); }, 4500);
+  }
+
+  function triggerFX(fxName) {
+    runFX(fxName);
+    if (channel) channel.send({ type: 'broadcast', event: 'party-event', payload: { type: 'fx', fxName } });
+  }
+
+  function runFX(fxName) {
+    const floor = document.getElementById('dance-floor');
+    if (fxName === 'strobe') {
+      playDJEffect('bass');
+      floor.classList.add('strobe-flash');
+      setTimeout(() => floor.classList.remove('strobe-flash'), 1500);
+    } else {
+      const icon = fxName === 'heart' ? '❤️' : '🎆';
+      for (let i = 0; i < 8; i++) {
+        const el = document.createElement('div');
+        el.className = 'fly-icon'; el.innerText = icon;
+        el.style.left = (Math.random() * 80 + 10) + '%';
+        el.style.animationDuration = (Math.random() * 1 + 1.5) + 's';
+        floor.appendChild(el);
+        setTimeout(() => el.remove(), 2500);
+      }
+    }
+  }
+
+  function showMCShout(text) {
+    const shout = document.getElementById('mc-shout');
+    shout.innerText = 'MC HÍP: ' + text; shout.style.display = 'block';
+    clearTimeout(window.shoutTimer);
+    window.shoutTimer = setTimeout(() => { shout.style.display = 'none'; }, 4000);
+  }
+
+  function sendChat() {
+    if (!channel) return;
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+    myState.msg = text; input.value = '';
+    channel.track(myState);
+    setTimeout(() => { myState.msg = ''; channel.track(myState); }, 5000);
+  }
+
+  function changeTrack() {
+    trackIdx = (trackIdx + 1) % tracks.length;
+    const audio = document.getElementById('bg-music');
+    audio.src = tracks[trackIdx]; audio.play();
+    document.getElementById('music-btn').innerText = '⏸';
+    showMCShout('ĐÃ CHUYỂN SANG MIX SỐ ' + (trackIdx + 1) + '!');
+  }
+
+  function toggleMusic() {
+    const audio = document.getElementById('bg-music');
+    const btn = document.getElementById('music-btn');
+    if (audio.paused) { audio.play(); btn.innerText = '⏸'; }
+    else { audio.pause(); btn.innerText = '🔊'; }
+  }
+
+  function renderPlayers(presenceState) {
+    const container = document.getElementById('players-container');
+    const keys = Object.keys(presenceState);
+    document.getElementById('online-count').innerText = keys.length + ' đang quẩy';
+    container.innerHTML = '';
+    keys.forEach(key => {
+      const stateList = presenceState[key];
+      const p = Array.isArray(stateList) ? stateList[0] : stateList;
+      if (!p) return;
+      const icon = p.gender === 'nu' ? '💃' : '🕺';
+      const div = document.createElement('div');
+      div.className = 'player';
+      div.style.left = p.x + '%'; div.style.top = p.y + '%';
+      div.innerHTML = `
+        ${p.msg ? <div class="chat-bubble">${p.msg}</div> : ''}
+        <div class="player-name" style="border-color: ${p.gender === 'nu' ? '#00f2fe' : '#ff007f'}">${p.name}</div>
+        <div class="avatar-wrap ${p.dance}">${icon}</div>
+      `;
+      container.appendChild(div);
+    });
+  }
 </script>
 </body>
 </html>
+Soạn
