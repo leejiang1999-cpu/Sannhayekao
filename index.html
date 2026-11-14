@@ -50,7 +50,7 @@ canvas{width:100%;max-width:420px;height:350px;display:block;touch-action:manipu
   <button class="act" onclick="setDance(6,'💘 THẢ TIM!')">💘 THẢ TIM</button>
 </div>
 <script>
-const API="https://script.google.com/macros/s/AKfycbzBq-hW_XUNBRa5WJ-e8rpLKhbcKTFEKLbqAzPNU4js4HHrOJ1BFyvUTvHapjuP8PbXJA/exec";
+const API="https://google.com";
 const UID="u"+Date.now()+Math.floor(Math.random()*999);
 const cv=document.getElementById("c"),ctx=cv.getContext("2d");
 let ac,step=0,iv,me="Khách "+Math.floor(Math.random()*99),gen=0,mx=Math.floor(Math.random()*200+110),my=Math.floor(Math.random()*70+220),dance=1,say="LÊN SÀN!",stT=90,trk=0,online="",cnt=1,tgt="",rep="",repT=0,curThinh="",netSt="⏳";
@@ -76,9 +76,6 @@ function sync(){
   sc.onerror=()=>{netSt="❌Lỗi";showBar();};
   document.body.appendChild(sc);
 }
-Soạn
-Viết cho Niê Ngọc Hiếu
-
 sync();setInterval(sync,1800);
 function tone(tp,f1,f2,vol,dur){let t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=tp;o.frequency.setValueAtTime(f1,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.005,t+dur);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);}
 function playStep(){if(!ac)return;let s=step%16,mel=beats.split("|").at(trk).split(",");if(s%4===0)tone("sine",150,35,0.65,0.16);if(s%4===2)tone("sawtooth",65,110,0.28,0.14);if(s%2===1)tone("square",3200,1200,0.05,0.04);let nf=Number(mel.at(s));if(nf>0)tone("sawtooth",nf,nf*1.01,0.14,0.13);step++;}
