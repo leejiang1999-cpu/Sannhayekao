@@ -63,15 +63,22 @@ const thinh30="Mời bạn ly kem tươi quán anh Hiếu nhé!|Cà phê đắng
 function showBar(){document.getElementById("author").innerText="👑 NIÊ NGỌC HIẾU • "+netSt+" ONLINE: "+cnt+" NGƯỜI";}
 function randThinh(){let a=thinh30.split("|");curThinh=a.at(Math.floor(Math.random()*a.length));document.getElementById("fpreview").innerText="💬 "+curThinh;}
 function upName(){let v=document.getElementById("nm").value.trim();if(v)me=v;}
+window.onSan=function(data){
+  netSt="✅";let nw="",c=0,vals=Object.values(data);
+  for(let i=0;i<vals.length;i++){let u=vals.at(i);if(!u||!u.id)continue;c++;if(u.id===UID)continue;let cs=(u.s||"").split("|").join(" ").split(",").join(" ");nw+=(nw?"|":"")+u.n+","+u.x+","+u.y+","+u.c+","+u.d+","+u.g+","+cs;}
+  online=nw;cnt=Math.max(1,c);showBar();
+};
 function sync(){
   upName();showBar();
-  let q="?id="+encodeURIComponent(UID)+"&n="+encodeURIComponent(me)+"&x="+Math.round(mx)+"&y="+Math.round(my)+"&d="+dance+"&g="+gen+"&c="+encodeURIComponent(myCl)+"&s="+encodeURIComponent(stT>0?say:"");
-  fetch(API+q).then(r=>r.json()).then(data=>{
-    netSt="✅";let nw="",c=0,vals=Object.values(data);
-    for(let i=0;i<vals.length;i++){let u=vals.at(i);if(!u||!u.id)continue;c++;if(u.id===UID)continue;let cs=(u.s||"").split("|").join(" ").split(",").join(" ");nw+=(nw?"|":"")+u.n+","+u.x+","+u.y+","+u.c+","+u.d+","+u.g+","+cs;}
-    online=nw;cnt=Math.max(1,c);showBar();
-  }).catch(()=>{netSt="❌Lỗi";showBar();});
+  let q="?cb=onSan&id="+encodeURIComponent(UID)+"&n="+encodeURIComponent(me)+"&x="+Math.round(mx)+"&y="+Math.round(my)+"&d="+dance+"&g="+gen+"&c="+encodeURIComponent(myCl)+"&s="+encodeURIComponent(stT>0?say:"");
+  let old=document.getElementById("jp");if(old)old.remove();
+  let sc=document.createElement("script");sc.id="jp";sc.src=API+q;
+  sc.onerror=()=>{netSt="❌Lỗi";showBar();};
+  document.body.appendChild(sc);
 }
+Soạn
+Viết cho Niê Ngọc Hiếu
+
 sync();setInterval(sync,1800);
 function tone(tp,f1,f2,vol,dur){let t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=tp;o.frequency.setValueAtTime(f1,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.005,t+dur);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);}
 function playStep(){if(!ac)return;let s=step%16,mel=beats.split("|").at(trk).split(",");if(s%4===0)tone("sine",150,35,0.65,0.16);if(s%4===2)tone("sawtooth",65,110,0.28,0.14);if(s%2===1)tone("square",3200,1200,0.05,0.04);let nf=Number(mel.at(s));if(nf>0)tone("sawtooth",nf,nf*1.01,0.14,0.13);step++;}
