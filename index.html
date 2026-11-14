@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Sàn Quẩy & Chat Online Ea Kao - Tác giả: Niê Ngọc Hiếu</title>
+<style>
+*{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#09050f;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center}
+#author{width:100%;max-width:420px;background:linear-gradient(90deg,#ff6f00,#ff9800);color:#1a0b2e;text-align:center;font-size:12px;font-weight:bold;padding:5px}
+#top,#chat{width:100%;max-width:420px;display:flex;gap:4px;padding:6px;background:#1a0b2e}
+#top{border-bottom:2px solid #e040fb}
+#chat{border-top:1px solid #4a148c}
+input{flex:1;min-width:70px;padding:8px;border-radius:8px;border:1px solid #e040fb;background:#2a124a;color:#fff;font-size:13px}
+.go{padding:8px 9px;background:#ff9800;color:#000;font-weight:bold;border:none;border-radius:8px;font-size:12px}
+canvas{width:100%;max-width:420px;height:340px;display:block;touch-action:manipulation}
+#bar{width:100%;max-width:420px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:6px}
+.act{padding:9px 3px;font-size:11px;font-weight:bold;border:none;border-radius:8px;color:#fff;background:linear-gradient(#7b1fa2,#4a148c);box-shadow:0 2px 0 #ea80fc}
+.act:active{transform:translateY(2px)}
+#flirt{display:none;position:fixed;bottom:125px;width:92%;max-width:390px;background:#2a0845;border:2px solid #ff4081;border-radius:12px;padding:10px;text-align:center;z-index:9}
+.fbtn{display:block;width:100%;margin:5px 0;padding:8px;background:#ff4081;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:12px}
+</style>
+</head>
+<body>
+<div id="author">👑 TÁC GIẢ: NIÊ NGỌC HIẾU • TẠP HÓA & KEM TƯƠI EA KAO</div>
+<div id="top">
+  <input id="nm" placeholder="Tên bạn..." maxlength="11">
+  <button class="go" id="gbtn" onclick="togGen()">🧑 NAM</button>
+  <button class="go" onclick="join()">LÊN SÀN</button>
+  <button class="go" style="background:#00e5ff" onclick="nextBeat()">🎛️ BEAT</button>
+</div>
+<canvas id="c" width="420" height="340"></canvas>
+<div id="chat">
+  <input id="msg" placeholder="💬 Nhập lời chat hiện trên đầu..." maxlength="35" onkeydown="if(event.key==='Enter')sendChat()">
+  <button class="go" style="background:#69f0ae" onclick="sendChat()">GỬI CHAT</button>
+</div>
+<div id="flirt">
+  <div id="ftitle" style="font-weight:bold;color:#ffea00;margin-bottom:6px">💌 Nhắn làm quen:</div>
+  <button class="fbtn" onclick="sendFlirt('🍦 Mời bạn ly kem tươi quán anh Hiếu nhé!')">🍦 Mời ly kem tươi Ea Kao</button>
+  <button class="fbtn" onclick="sendFlirt('☕ Cà phê đắng nhưng gặp bạn lại ngọt!')">☕ Thả thính mùa cà phê</button>
+  <button class="fbtn" onclick="sendFlirt('💃 Quẩy chung với mình một bài nha!')">💃 Rủ nhảy chung cực sung</button>
+</div>
+<div id="bar">
+  <button class="act" onclick="setDance(1,'🤯 LẮC ĐẦU!')">🤯 LẮC ĐẦU</button>
+  <button class="act" onclick="setDance(2,'🍑 QUẨY MÔNG!')">🍑 QUẨY MÔNG</button>
+  <button class="act" onclick="setDance(3,'🪭 MÚA QUẠT!')">🪭 MÚA QUẠT</button>
+  <button class="act" onclick="setDance(4,'🕺 NHẢY DÂY!')">🕺 NHẢY DÂY</button>
+  <button class="act" onclick="setDance(5,'🤖 ROBOT!')">🤖 ROBOT</button>
+  <button class="act" onclick="setDance(6,'💘 THẢ TIM!')">💘 THẢ TIM</button>
+</div>
+<script>
+const DB="https://firebaseio.com";
+const UID="u"+Math.floor(Math.random()*999999);
+const cv=document.getElementById("c"),ctx=cv.getContext("2d");
+let ac,step=0,iv,me="Khách Mới",gen=0,mx=210,my=265,dance=1,say="LÊN SÀN!",stT=90,trk=0,online="",cnt=1;
+const beats="330,330,0,330,392,0,440,392,330,0,293,330,392,0,440,523|440,0,440,523,587,0,523,440,392,0,392,440,523,0,587,659|261,329,392,523,392,329,261,0,293,349,440,587,440,349,293,0";
+const cls="#ff4081|#00e5ff|#69f0ae|#ffd740|#e040fb|#ff6e40|#40c4ff|#b2ff59";
+const myCl=cls.split("|").at(Math.floor(Math.random()*8));
+const bots="Bé Mơ,105,200,#ff4081,3,1|Tèo Cà,315,205,#00e5ff,1,0|Út Lan,145,295,#69f0ae,2,1";
+
+function syncUp(){
+  let d={id:UID,n:me,x:Math.round(mx),y:Math.round(my),d:dance,g:gen,c:myCl,s:stT>0?say:"",t:Date.now()};
+  fetch("https://firebaseio.com"+UID+".json",{method:"PUT",body:JSON.stringify(d)}).catch(()=>{});
+}
+function syncDown(){
+  fetch(DB).then(r=>r.json()).then(data=>{
+    if(!data)return;
+    let now=Date.now(),nw="",c=0;
+    Object.values(data).forEach(u=>{
+      if(!u||now-u.t>25000)return;
+      c++;if(u.id===UID)return;
+      let cleanS=(u.s||"").replaceAll("|"," ").replaceAll(","," ");
+      nw+=(nw?"|":"")+u.n+","+u.x+","+u.y+","+u.c+","+u.d+","+u.g+","+cleanS;
+    });
+    online=nw;cnt=Math.max(1,c);
+  }).catch(()=>{});
+}
+setInterval(()=>{syncUp();syncDown();},1100);
+
+function tone(tp,f1,f2,vol,dur){
+  let t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();
+  o.type=tp;o.frequency.setValueAtTime(f1,t);
+  if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.005,t+dur);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);
+}
+function playStep(){
+  if(!ac)return;
+  let s=step%16,mel=beats.split("|").at(trk).split(",");
+  if(s%4===0)tone("sine",150,35,0.65,0.16);
+  if(s%4===2)tone("sawtooth",65,110,0.28,0.14);
+  if(s%2===1)tone("square",3200,1200,0.05,0.04);
+  let nf=Number(mel.at(s));if(nf>0)tone("sawtooth",nf,nf*1.01,0.14,0.13);
+  step++;
+}
+function startMusic(){
+  if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();
+  if(ac.state==="suspended")ac.resume();
+  if(!iv)iv=setInterval(playStep,135);
+}
+function togGen(){gen=gen===0?1:0;document.getElementById("gbtn").innerText=gen===0?"🧑 NAM":"👩 NỮ";syncUp();}
+function nextBeat(){startMusic();trk=(trk+1)%3;say="🎧 BEAT "+(trk+1);stT=70;syncUp();}
+function join(){let v=document.getElementById("nm").value.trim();if(v)me=v;startMusic();setDance(dance,"LÊN SÀN ONLINE!");}
+function setDance(d,txt){startMusic();dance=d;say=txt;stT=90;syncUp();}
+function sendFlirt(msg){document.getElementById("flirt").style.display="none";say=msg;stT=240;dance=6;syncUp();}
+function sendChat(){
+  let el=document.getElementById("msg"),v=el.value.trim();
+  if(!v)return;
+  startMusic();say="💬 "+v;stT=320;el.value="";syncUp();
+}
+
+cv.addEventListener("pointerdown",e=>{
+  startMusic();let r=cv.getBoundingClientRect();
+  let tx=(e.clientX-r.left)*(420/r.width),ty=Math.max(165,Math.min(315,(e.clientY-r.top)*(340/r.height)));
+  let hit="",all=bots+(online?"|"+online:"");
+  all.split("|").forEach(s=>{if(!s)return;let p=s.split(","),px=Number(p.at(1)),py=Number(p.at(2));if(Math.hypot(tx-px,ty-py)<26)hit=p.at(0)+","+px+","+py;});
+  if(hit){let h=hit.split(",");mx=Number(h.at(1))-24;my=Number(h.at(2))+2;document.getElementById("ftitle").innerText="💌 Làm quen với "+h.at(0)+":";document.getElementById("flirt").style.display="block";}
+  else{document.getElementById("flirt").style.display="none";mx=tx;my=ty;}
+  syncUp();
+});
+
+function drawGuy(x,y,cl,name,dn,gd,msg,isMe){
+  let sc=0.72+(y-160)/395,t=step*0.85+x*0.08;if(dn===5)t=Math.floor(step/2)*1.5;
+  let by=dn===4?-Math.abs(Math.sin(t))*18:Math.sin(t)*4,hx=dn===1?Math.sin(t*1.6)*7:0,hip=dn===2?Math.sin(t*1.4)*8:0;
+  ctx.save();ctx.translate(x,y+by);ctx.scale(sc,sc);
+  ctx.fillStyle="rgba(0,0,0,0.4)";ctx.beginPath();ctx.ellipse(0,22-by,16,5,0,0,Math.PI*2);ctx.fill();
+  if(gd===1){ctx.fillStyle="#212121";ctx.fillRect(hx-10,-18,20,22);ctx.fillStyle=cl;ctx.beginPath();ctx.moveTo(-8,-6);ctx.lineTo(8,-6);ctx.lineTo(14+hip,16);ctx.lineTo(-14+hip,16);ctx.closePath();ctx.fill();}
+  else{ctx.fillStyle=cl;ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(9,-6);ctx.lineTo(10+hip,16);ctx.lineTo(-10+hip,16);ctx.closePath();ctx.fill();}
+  ctx.fillStyle="#ffcc80";ctx.beginPath();ctx.arc(hx,-16,8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#212121";ctx.beginPath();ctx.arc(hx,-18,8,Math.PI,0);ctx.fill();
+  ctx.strokeStyle="#ffcc80";ctx.lineWidth=3;ctx.beginPath();
+  if(dn===3){let f=Math.sin(t*2)*12;ctx.moveTo(-9,-2);ctx.lineTo(-22,-10+f);ctx.moveTo(9,-2);ctx.lineTo(22,-10-f);}
+  else if(dn===6){ctx.moveTo(-9,-2);ctx.lineTo(-14,-22);ctx.moveTo(9,-2);ctx.lineTo(14,-22);}
+  else if(dn===5){let r=(Math.floor(step/2)%2===0)?-15:4;ctx.moveTo(-9,-2);ctx.lineTo(-18,-2);ctx.lineTo(-18,r);ctx.moveTo(9,-2);ctx.lineTo(18,-2);ctx.lineTo(18,-r);}
+  else{ctx.moveTo(-9,-2);ctx.lineTo(-16,-8+by);ctx.moveTo(9,-2);ctx.lineTo(16,-8-by);}
+  ctx.stroke();
+  ctx.fillStyle=isMe?"#ffea00":"#fff";ctx.font=isMe?"bold 13px sans-serif":"bold 11px sans-serif";ctx.textAlign="center";
+  ctx.fillText(name,hx,-30);
+  if(msg){
+    ctx.font="bold 10px sans-serif";
+    let bw=Math.max(80,ctx.measureText(msg).width+16);
+    ctx.fillStyle=isMe?"#ffea00":"#00e5ff";ctx.fillRect(-bw/2,-58,bw,20);
+    ctx.fillStyle="#000";ctx.fillText(msg,0,-44);
+  }
+  ctx.restore();
+}
+
+function loop(){
+  ctx.clearRect(0,0,420,340);if(stT>0)stT--;
+  let lc=cls.split("|").at(Math.floor(step/2)%8);
+  ctx.fillStyle="#120822";ctx.fillRect(0,0,420,340);
+  ctx.fillStyle="#28114b";ctx.beginPath();ctx.moveTo(30,145);ctx.lineTo(390,145);ctx.lineTo(420,325);ctx.lineTo(0,325);ctx.closePath();ctx.fill();
+  for(let i=0;i<6;i++){ctx.strokeStyle=lc;ctx.globalAlpha=0.2;ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(50+i*64,0);ctx.lineTo(20+i*75+Math.sin(step*0.4+i)*50,325);ctx.stroke();}
+  ctx.globalAlpha=1;
+  ctx.fillStyle="#ff9800";ctx.fillRect(110,105,200,38);
+  ctx.fillStyle="#1a0b2e";ctx.font="bold 11px sans-serif";ctx.textAlign="center";
+  ctx.fillText("TẠP HÓA & KEM TƯƠI EA KAO",210,122);
+  ctx.fillStyle="#fff";ctx.font="10px sans-serif";ctx.fillText("DJ: NIÊ NGỌC HIẾU • ONLINE: "+cnt+" NGƯỜI",210,137);
+
+  bots.split("|").forEach(s=>{let p=s.split(",");drawGuy(Number(p.at(1)),Number(p.at(2)),p.at(3),p.at(0),Number(p.at(4)),Number(p.at(5)),"",0);});
+  online.split("|").forEach(s=>{if(!s)return;let p=s.split(",");drawGuy(Number(p.at(1)),Number(p.at(2)),p.at(3),p.at(0),Number(p.at(4)),Number(p.at(5)),p.at(6),0);});
+  drawGuy(mx,my,myCl,me+" ⭐",dance,gen,stT>0?say:"",1);
+
+  ctx.fillStyle="rgba(255,255,255,0.8)";ctx.font="bold 11px sans-serif";ctx.textAlign="center";
+  ctx.fillText("© Tác giả: Niê Ngọc Hiếu • Ngã Tư Hồ Ea Kao",210,335);
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
