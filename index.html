@@ -50,7 +50,7 @@ canvas{width:100%;max-width:420px;height:350px;display:block;touch-action:manipu
   <button class="act" onclick="setDance(6,'💘 THẢ TIM!')">💘 THẢ TIM</button>
 </div>
 <script>
-const DB="https://firebasedatabase.app";
+const API="https://script.google.com/macros/s/AKfycbzBq-hW_XUNBRa5WJ-e8rpLKhbcKTFEKLbqAzPNU4js4HHrOJ1BFyvUTvHapjuP8PbXJA/exec";
 const UID="u"+Date.now()+Math.floor(Math.random()*999);
 const cv=document.getElementById("c"),ctx=cv.getContext("2d");
 let ac,step=0,iv,me="Khách "+Math.floor(Math.random()*99),gen=0,mx=Math.floor(Math.random()*200+110),my=Math.floor(Math.random()*70+220),dance=1,say="LÊN SÀN!",stT=90,trk=0,online="",cnt=1,tgt="",rep="",repT=0,curThinh="",netSt="⏳";
@@ -65,15 +65,14 @@ function randThinh(){let a=thinh30.split("|");curThinh=a.at(Math.floor(Math.rand
 function upName(){let v=document.getElementById("nm").value.trim();if(v)me=v;}
 function sync(){
   upName();showBar();
-  let d={id:UID,n:me,x:Math.round(mx),y:Math.round(my),d:dance,g:gen,c:myCl,s:stT>0?say:"",t:Date.now()};
-  fetch(DB+"/"+UID+".json",{method:"PUT",body:JSON.stringify(d)}).then(r=>{netSt=r.ok?"✅":"❌"+r.status;showBar();}).catch(()=>{netSt="❌Mạng";showBar();});
-  fetch(DB+".json?t="+Date.now()).then(r=>r.json()).then(data=>{
-    if(!data)return;let now=Date.now(),nw="",c=0,vals=Object.values(data);
-    for(let i=0;i<vals.length;i++){let u=vals.at(i);if(!u||!u.id||now-u.t>90000)continue;c++;if(u.id===UID)continue;let cs=(u.s||"").split("|").join(" ").split(",").join(" ");nw+=(nw?"|":"")+u.n+","+u.x+","+u.y+","+u.c+","+u.d+","+u.g+","+cs;}
+  let q="?id="+encodeURIComponent(UID)+"&n="+encodeURIComponent(me)+"&x="+Math.round(mx)+"&y="+Math.round(my)+"&d="+dance+"&g="+gen+"&c="+encodeURIComponent(myCl)+"&s="+encodeURIComponent(stT>0?say:"");
+  fetch(API+q).then(r=>r.json()).then(data=>{
+    netSt="✅";let nw="",c=0,vals=Object.values(data);
+    for(let i=0;i<vals.length;i++){let u=vals.at(i);if(!u||!u.id)continue;c++;if(u.id===UID)continue;let cs=(u.s||"").split("|").join(" ").split(",").join(" ");nw+=(nw?"|":"")+u.n+","+u.x+","+u.y+","+u.c+","+u.d+","+u.g+","+cs;}
     online=nw;cnt=Math.max(1,c);showBar();
-  }).catch(()=>{});
+  }).catch(()=>{netSt="❌Lỗi";showBar();});
 }
-sync();setInterval(sync,1500);
+sync();setInterval(sync,1800);
 function tone(tp,f1,f2,vol,dur){let t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=tp;o.frequency.setValueAtTime(f1,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.005,t+dur);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);}
 function playStep(){if(!ac)return;let s=step%16,mel=beats.split("|").at(trk).split(",");if(s%4===0)tone("sine",150,35,0.65,0.16);if(s%4===2)tone("sawtooth",65,110,0.28,0.14);if(s%2===1)tone("square",3200,1200,0.05,0.04);let nf=Number(mel.at(s));if(nf>0)tone("sawtooth",nf,nf*1.01,0.14,0.13);step++;}
 function startMusic(){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume();if(!iv)iv=setInterval(playStep,135);}
@@ -83,7 +82,7 @@ function join(){upName();startMusic();setDance(dance,"LÊN SÀN ONLINE!");}
 function setDance(d,txt){upName();startMusic();dance=d;say=txt;stT=90;sync();}
 function sendFlirt(){document.getElementById("flirt").style.display="none";say="💘 "+curThinh;stT=260;dance=6;if(tgt==="Bé Mơ"){rep="Ko nhaz! 🙅‍♀️";repT=260;}else if(tgt==="Tèo Cà"||tgt==="Út Lan"){rep="Okela chốt đơn kem tươi luôn! 😍";repT=260;}sync();}
 function sendChat(){let el=document.getElementById("msg"),v=el.value.trim();if(!v)return;upName();startMusic();say="💬 "+v;stT=320;el.value="";sync();}
-  cv.addEventListener("pointerdown",e=>{
+cv.addEventListener("pointerdown",e=>{
   startMusic();let r=cv.getBoundingClientRect();
   let tx=(e.clientX-r.left)*(420/r.width),ty=Math.max(185,Math.min(325,(e.clientY-r.top)*(350/r.height)));
   let hit="",all=bots+(online?"|"+online:"");
